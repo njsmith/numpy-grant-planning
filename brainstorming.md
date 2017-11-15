@@ -27,6 +27,12 @@ so we can start thinking about prioritizing/planning?
     * need to have compatibility shims for old-style loop registration
     * need mechanism at loop level to create output dtype objects
 
+  * categorical data
+    * Contact:
+      * pandas dev
+      * sklearn dev (PR for categorical support already opened)
+      * matplotlib dev (there is "categorical" support in matplotlib 2.1)
+
 * missing data
 
   * depends on dtype refactors
@@ -43,6 +49,7 @@ so we can start thinking about prioritizing/planning?
     (g)ufuncs
 
   * better sparse arrays in scipy, so we can deprecate np.matrix?
+  
 
 # smaller changes
 
