@@ -136,3 +136,6 @@ so we can start thinking about prioritizing/planning?
 
 * review scipy.org's hosting situation, automate doc uploads etc.
 
+* consider experimenting with BLIS again, now that it has runtime
+  auto-configuration support:
+  https://groups.google.com/forum/#!topic/blis-devel/z__DDqkIikY
