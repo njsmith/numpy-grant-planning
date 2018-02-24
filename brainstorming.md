@@ -45,6 +45,54 @@ so we can start thinking about prioritizing/planning?
   
   * start with `__array_concatenate__`? what should it look like?
   
+    * there's stack and concatenate; should they be one special method
+      or two? (the only difference is whether an axis is created). I
+      guess I'm leaning towards `__array_stack__ ` and
+      `__array_concatenate__` and if they share a bunch of code that's
+      OK. (Cf. Python's comparison special methods.)
+      
+      `np.concatenate` and `np.stack` have extremely simple APIs, so
+      replacing them is probably pretty straightforward. In the
+      implementation we'll want to do some refactoring to pull out the
+      `__array_ufunc__` dispatch logic. (And that's itself in some
+      weird position because of the multiarray/umath split; maybe we
+      should be prioritizing fixing that?)
+      
+    * More complicated problem: we don't want to have
+      `__array_hstack__`, `__array_vstack__`, etc.; duck array authors
+      should just have to implement
+      `__array_concatenate__`/`__array_stack__` and the rest should
+      work automatically. So what other operations do these need?
+
+      In current numpy, dependencies (format is `x: y` means that x is
+      implemented using y):
+      
+      * `concatenate`: is primitive
+      * `stack`: `asanyarray`, `.shape`, `.ndim`, slicing with
+        `np.newaxis`, `concatenate`
+      * `hstack`: `atleast_1d`, `.ndim`, `concatenate`
+      * `vstack`: `atleast_2d`, `concatenate`
+      * `dstack`: `atleast_3d`, `concatenate`
+      * `row_stack`: `atleast_2d`, `concatenate`
+      * `column_stack`: `array(v, copy=False, subok=True)`, `.ndim`,
+        `array` with `ndmin=2`, `.T`, `concatenate` – this one is
+        super tricky
+      * `atleast_1d`: `asanyarray`, `reshape`
+      * `atleast_2d`: `asanyarray`, `reshape`, slicing with `newaxis`
+      * `atleast_3d`: `asanyarray`, `reshape`, slicing with `newaxis`
+
+      So I guess the main things are some kind of solution for
+      `as(any)array`, `.ndim` (not a big deal, we can just tell people
+      to implement this), and inserting axes?
+      
+      We should ask folks like @shoyer if they have a preference for
+      how the insert-an-axis operation should be spelled. Could just
+      be indexing with `newaxis`, but I don't know if people actually
+      like implementing that. I worry that `reshape` might be
+      difficult for some implementations (e.g. distributed arrays
+      where in the general case it might require an arbitrary
+      cross-machine shuffle).
+
   * enhance (g)ufunc API so that more of numpy's API can become
     (g)ufuncs
 
@@ -87,7 +135,7 @@ so we can start thinking about prioritizing/planning?
 
 * rationalizing scipy/numpy inconsistencies between linalg, fft
 
-* get oindex unblocked
+* get oindex unblocked and clean up fancy indexing
 
 * split off numpy.ma into its own library?
 
