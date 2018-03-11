@@ -14,6 +14,19 @@ so we can start thinking about prioritizing/planning?
       -- but, currently cython does not understand metaclasses. So
       this may require cython extensions.
 
+  * audit numpy to find the places where it's currently special-casing
+    different dtypes, so they can be moved into methods.
+  
+    * Anything that checks `PyDataType_HASFIELDS` is probably a hack
+      like this, e.g. see the use in `array_dealloc` and
+      `PyArray_XDECREF`
+      (note: [#10721](https://github.com/numpy/numpy/issues/10721))
+
+    * `.real` and `.imag` might be examples
+
+    * most likely to be seen for object dtype, void/record dtypes,
+      maybe string dtypes
+
   * casting is probably the hardest design problem
   
     * and in particular, making ufunc loop selection fast
