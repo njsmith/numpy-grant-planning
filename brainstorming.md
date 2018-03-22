@@ -40,6 +40,17 @@ so we can start thinking about prioritizing/planning?
     * need to have compatibility shims for old-style loop registration
     * need mechanism at loop level to create output dtype objects
 
+    * NA/where support in loops
+
+    * we also need to enhance the ufuncs machinery for duck arrays:
+      kwargs, more axis control, etc.; should think about these
+      together
+      
+    * @shoyer has some idea about letting arbitrary functions be
+      sorta-ufunc-ish and having a general dispatch mechanism
+      (`__array_func__`?) that I don't fully understand, but we should
+      touch base more as we get closer.
+
   * categorical data
     * Contact:
       * pandas dev
@@ -106,11 +117,37 @@ so we can start thinking about prioritizing/planning?
       where in the general case it might require an arbitrary
       cross-machine shuffle).
 
+  * making the mixin as useful as possible:
+  
+    * complication for mean/var/std: wants to do in-place operations *if
+      possible*, so has code like:
+      
+      if isinstance(obj, np.ndarray):
+          obj = np.sqrt(obj, out=obj)
+      else:
+          obj = np.sqrt(obj)
+
+      where really what it's switching on is whether the object is
+      mutable.
+      
+      - duckarray.mutable?
+
+      - np.ufunc(..., scratch=obj), meaning "if you can write to obj,
+        feel free, but if not don't worry about it"?
+        but this is error-prone, b/c people will only test with
+        mutable objects and it will seem to work.
+
   * enhance (g)ufunc API so that more of numpy's API can become
     (g)ufuncs
 
   * better sparse arrays in scipy, so we can deprecate np.matrix?
   
+  * tools for testing:
+    * standard test suite for array implementors? (depends 100% on
+      getting buy-in from them, but maybe they'd be into it)
+    * some mode you can flip numpy into while running your tests, that
+      makes it give you array-ish objects everywhere? (e.g. ndarray
+      but with a different C layout)
 
 # smaller changes
 
@@ -159,3 +196,9 @@ so we can start thinking about prioritizing/planning?
 * consider experimenting with BLIS again, now that it has runtime
   auto-configuration support:
   https://groups.google.com/forum/#!topic/blis-devel/z__DDqkIikY
+
+# Duck array expectations
+
+Things in numpy:
+
+
