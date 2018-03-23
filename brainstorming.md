@@ -65,6 +65,8 @@ so we can start thinking about prioritizing/planning?
 
 * duck arrays
 
+  More notes: https://docs.google.com/document/d/10mmyZ2-9GDm4W_5xJIMnbSzxFrD55lJkNsH8F7UB_Fs/edit
+
   * make a list of everything in numpy and work through it...
   
   * start with `__array_concatenate__`? what should it look like?
@@ -158,6 +160,9 @@ so we can start thinking about prioritizing/planning?
 
   * something for N+J to work on soon, we will meet this friday
     (11/17)
+
+* overhauling casting system ("safe", "same kind", etc. don't
+  entirely make sense?)
 
 * migrating some stuff into Cython
 
